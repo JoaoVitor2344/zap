@@ -6,21 +6,22 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 def main(context):
     expected_token = os.getenv("EXPECTED_BEARER_TOKEN")
 
     auth_header = context.req.headers.get("Authorization")
 
     if not auth_header:
-        return context.res.json({"error": "Authorization header is missing"}, status=401)
+        return context.res.status(401).json({"error": "Authorization header is missing"})
 
     try:
         bearer_token = auth_header.split(" ")[1]
     except IndexError:
-        return context.res.json({"error": "Bearer token malformed"}, status=400)
+        return context.res.status(400).json({"error": "Bearer token malformed"})
 
     if bearer_token != expected_token:
-        return context.res.json({"error": "Unauthorized"}, status=401)
+        return context.res.status(401).json({"error": "Unauthorized"})
 
     client = (
         Client()
