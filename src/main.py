@@ -2,31 +2,42 @@ from appwrite.client import Client
 from appwrite.services.users import Users
 from appwrite.exception import AppwriteException
 import os
+from dotenv import load_dotenv
 
-# This Appwrite function will be executed every time your function is triggered
+load_dotenv()
+
 def main(context):
-    # You can use the Appwrite SDK to interact with other services
-    # For this example, we're using the Users service
+    expected_token = os.getenv("EXPECTED_BEARER_TOKEN")
+
+    auth_header = context.req.headers.get("Authorization")
+
+    if not auth_header:
+        return context.res.json({"error": "Authorization header is missing"}, status=401)
+
+    try:
+        bearer_token = auth_header.split(" ")[1]
+    except IndexError:
+        return context.res.json({"error": "Bearer token malformed"}, status=400)
+
+    if bearer_token != expected_token:
+        return context.res.json({"error": "Unauthorized"}, status=401)
+
     client = (
         Client()
         .set_endpoint(os.environ["APPWRITE_FUNCTION_API_ENDPOINT"])
         .set_project(os.environ["APPWRITE_FUNCTION_PROJECT_ID"])
         .set_key(context.req.headers["x-appwrite-key"])
     )
+
     users = Users(client)
 
     try:
         response = users.list()
-        # Log messages and errors to the Appwrite Console
-        # These logs won't be seen by your end users
         context.log("Total users: " + str(response["total"]))
     except AppwriteException as err:
         context.error("Could not list users: " + repr(err))
 
-    # The req object contains the request data
     if context.req.path == "/ping":
-        # Use res object to respond with text(), json(), or binary()
-        # Don't forget to return a response!
         return context.res.text("Pong")
 
     return context.res.json(
