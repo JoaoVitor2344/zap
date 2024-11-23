@@ -56,19 +56,27 @@ def extract_response_text(response):
 
 
 def main(context):
-    user_message = 'Oq é a vida?'
-    request = {
-        "message": user_message
-    }
-
-    response_text = extract_response_text(generate_response(request))
+    hub_challenge = context['hub.challenge']
+    expected_challenge = os.getenv('HUB_CHALLENGE')
 
     response = Response()
-    response._content = json.dumps({"message": response_text}).encode('utf-8')
-
     response_dict = {
         "status_code": 200,
-        "body": json.dumps(response.json())
+        "body": ''
     }
 
+    if hub_challenge == expected_challenge:
+        response._content = json.dumps({"hub.challenge": expected_challenge}).encode('utf-8')
+        response_dict['body'] = expected_challenge
+    else:
+        user_message = 'Oq é a vida?'
+        request = {
+            "message": user_message
+        }
+
+        response._content = json.dumps({"message": extract_response_text(generate_response(request))}).encode('utf-8')
+        response_dict['body'] = response.json()
+
     return response_dict
+
+# json.dumps(response.json())
