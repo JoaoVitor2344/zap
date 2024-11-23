@@ -56,7 +56,7 @@ def extract_response_text(response):
 
 
 def main(context):
-    hub_challenge = context['hub.challenge']
+    hub_challenge = getattr(context, 'hub.challenge', None)
     expected_challenge = os.getenv('HUB_CHALLENGE')
 
     response = Response()
