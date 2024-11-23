@@ -71,5 +71,4 @@ def main(context):
         "body": json.dumps(response.json())
     }
 
-    return context.res.empty()
-    # return response_dict
+    return response_dict
