@@ -67,6 +67,6 @@ def main(context):
         response.status_code = 200
         response._content = f'{{ "message": "{response_text}" }}'.encode('utf-8')
 
-        print(response.json())
+        return response.json()
     except Exception as e:
         print("Erro:", e)
