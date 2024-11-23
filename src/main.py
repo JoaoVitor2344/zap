@@ -54,18 +54,19 @@ def extract_response_text(response):
         raise ValueError("Erro ao extrair o texto da resposta: ", e)
 
 
-try:
-    user_message = input("Digite sua mensagem: ")
-    request = {
-        "message": user_message
-    }
+def main():
+    try:
+        user_message = input("Digite sua mensagem: ")
+        request = {
+            "message": user_message
+        }
 
-    response_text = extract_response_text(generate_response(request))
+        response_text = extract_response_text(generate_response(request))
 
-    response = Response()
-    response.status_code = 200
-    response._content = f'{{ "message": "{response_text}" }}'.encode('utf-8')
+        response = Response()
+        response.status_code = 200
+        response._content = f'{{ "message": "{response_text}" }}'.encode('utf-8')
 
-    print(response.json())
-except Exception as e:
-    print("Erro:", e)
+        print(response.json())
+    except Exception as e:
+        print("Erro:", e)
