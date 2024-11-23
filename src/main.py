@@ -67,6 +67,8 @@ def main(context):
     }
 
     if hub_token == expected_token:
+        print(hub_challenge, hub_token, expected_token)
+
         response._content = json.dumps({"hub.challenge": hub_challenge}).encode('utf-8')
         response_dict['body'] = response.json()
     # else:
@@ -77,7 +79,3 @@ def main(context):
     #
     #     response._content = json.dumps({"message": extract_response_text(generate_response(request))}).encode('utf-8')
     #     response_dict['body'] = json.dumps(response.json())
-
-    return hub_challenge, hub_token, expected_token
-
-# json.dumps(response.json())
