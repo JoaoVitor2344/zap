@@ -1,23 +1,19 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, abort
+from requests.models import Response
 import google.generativeai as genai
 
-# Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
 
-# Inicializa o aplicativo Flask
-app = Flask(__name__)
 
 def get_google_api_key():
-    """Obtém a chave de API do Google a partir das variáveis de ambiente."""
     api_key = os.getenv('GOOGLE_API_KEY')
     if not api_key:
         raise ValueError("A chave GOOGLE_API_KEY não está definida nas variáveis de ambiente.")
     return api_key
 
+
 def configure_genai(api_key):
-    """Configura a API do Google Generative AI com a chave fornecida e retorna o modelo."""
     genai.configure(api_key=api_key)
 
     generation_config = {
@@ -33,30 +29,49 @@ def configure_genai(api_key):
         generation_config=generation_config,
     )
 
-@app.route('/', methods=['POST'])
-def home():
-    """Rota para processar mensagens e gerar respostas usando o modelo Generative AI."""
-    # Obtém os dados JSON enviados na requisição
-    data = request.get_json()
 
-    # Verifica se a chave 'message' está presente nos dados
-    if not data or 'message' not in data:
-        abort(400, description="A chave 'message' está ausente na carga da requisição.")
+def generate_response(request_data):
+    if 'message' not in request_data:
+        raise ValueError("A chave 'message' está ausente nos dados da requisição.")
 
-    # Obtém a chave da API e configura o modelo
-    try:
-        api_key = get_google_api_key()
-        model = configure_genai(api_key)
-    except ValueError as e:
-        abort(500, description=str(e))
+    message = request_data['message']
+    if not message:
+        raise ValueError("A mensagem não pode estar vazia.")
 
-    # Inicia a sessão de chat e envia a mensagem para o modelo
+    api_key = get_google_api_key()
+    model = configure_genai(api_key)
+
     chat_session = model.start_chat(history=[])
-    response = chat_session.send_message(data['message'])
 
-    # Retorna a resposta gerada como JSON
-    return jsonify(response), 200
+    return chat_session.send_message(message)
+
+
+def extract_response_text(response):
+    try:
+        text = response._result.candidates[0].content.parts[0].text
+        return text
+    except (KeyError, IndexError, AttributeError) as e:
+        raise ValueError("Erro ao extrair o texto da resposta: ", e)
+
+
+def main():
+    try:
+        user_message = input("Digite sua mensagem: ")
+        request = {
+            "message": user_message
+        }
+
+        response = generate_response(request)
+        response_text = extract_response_text(response)
+
+        response = Response()
+        response.status_code = 200
+        response._content = f'{{ "message": "{response_text}" }}'.encode('utf-8')
+
+        print(response.json())
+    except Exception as e:
+        print("Erro:", e)
+
 
 if __name__ == "__main__":
-    # Inicia o servidor Flask na porta 5001
-    app.run(port=5001, debug=True)
+    main()
