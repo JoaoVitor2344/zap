@@ -63,12 +63,11 @@ def main(context):
     response_text = extract_response_text(generate_response(request))
 
     response = Response()
-    response.status_code = 200
     response._content = f'{{ "message": "{response_text}" }}'.encode('utf-8')
 
     response_dict = {
-        "status_code": response.status_code,
-        "body": response.json()
+        "status_code": 200,
+        "body": response
     }
 
     return response_dict
