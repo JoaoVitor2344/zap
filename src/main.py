@@ -78,6 +78,6 @@ def main(context):
     #     response._content = json.dumps({"message": extract_response_text(generate_response(request))}).encode('utf-8')
     #     response_dict['body'] = json.dumps(response.json())
 
-    return context
+    return hub_challenge, hub_token, expected_token
 
 # json.dumps(response.json())
