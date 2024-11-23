@@ -67,7 +67,7 @@ def main(context):
     }
 
     if hub_token == expected_token:
-        print(hub_challenge, hub_token, expected_token)
+        context.log.info(hub_challenge, hub_token, expected_token)
 
         response._content = json.dumps({"hub.challenge": hub_challenge}).encode('utf-8')
         response_dict['body'] = response.json()
