@@ -54,7 +54,7 @@ def extract_response_text(response):
         raise ValueError("Erro ao extrair o texto da resposta: ", e)
 
 
-def main():
+def main(context):
     try:
         user_message = input("Digite sua mensagem: ")
         request = {
