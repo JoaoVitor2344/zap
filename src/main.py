@@ -66,4 +66,9 @@ def main(context):
     response.status_code = 200
     response._content = f'{{ "message": "{response_text}" }}'.encode('utf-8')
 
-    return response
+    response_dict = {
+        "status_code": response.status_code,
+        "body": response.json()
+    }
+
+    return response_dict
