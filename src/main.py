@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from requests.models import Response
 import google.generativeai as genai
+import json
 
 load_dotenv()
 
@@ -63,11 +64,11 @@ def main(context):
     response_text = extract_response_text(generate_response(request))
 
     response = Response()
-    response._content = f'{{ "message": "{response_text}" }}'.encode('utf-8')
+    response._content = json.dumps({"message": response_text}).encode('utf-8') # f'{{ "message": "{response_text}" }}'.encode('utf-8')
 
     response_dict = {
         "status_code": 200,
-        "body": response
+        "body": response.json()
     }
 
     return response_dict
