@@ -57,7 +57,8 @@ def extract_response_text(response):
 
 def main(context):
     hub_challenge = getattr(context, 'hub.challenge', None)
-    expected_challenge = os.getenv('HUB_CHALLENGE')
+    hub_token = getattr(context, 'hub.verify_token', None)
+    expected_token = os.getenv('VERIFY_TOKEN')
 
     response = Response()
     response_dict = {
@@ -65,9 +66,9 @@ def main(context):
         "body": ''
     }
 
-    if hub_challenge == expected_challenge:
-        response._content = json.dumps({"hub.challenge": expected_challenge}).encode('utf-8')
-        response_dict['body'] = expected_challenge
+    if hub_token == expected_token:
+        response._content = json.dumps({"hub.challenge": hub_challenge}).encode('utf-8')
+        response_dict['body'] = json.dumps(response.json())
     else:
         user_message = 'Oq é a vida?'
         request = {
@@ -75,7 +76,7 @@ def main(context):
         }
 
         response._content = json.dumps({"message": extract_response_text(generate_response(request))}).encode('utf-8')
-        response_dict['body'] = response.json()
+        response_dict['body'] = json.dumps(response.json())
 
     return response_dict
 
