@@ -71,4 +71,5 @@ def main(context):
         "body": json.dumps(response.json())
     }
 
-    return response_dict
+    # return response_dict
+    return context.log('')
