@@ -55,6 +55,12 @@ def extract_response_text(response):
         raise ValueError("Erro ao extrair o texto da resposta: ", e)
 
 
+def generate_chat_response(user_message):
+    request = {"message": user_message}
+    response = generate_response(request)
+    return extract_response_text(response)
+
+
 def main(context):
     hub_challenge = getattr(context, 'hub.challenge', None)
     hub_token = getattr(context, 'hub.verify_token', None)
@@ -67,17 +73,11 @@ def main(context):
     }
 
     if hub_token == expected_token:
-        context.log.info(hub_challenge, hub_token, expected_token)
-
         response._content = json.dumps({"hub.challenge": hub_challenge}).encode('utf-8')
-        response_dict['body'] = response.json()
-    # else:
-    #     user_message = 'Oq é a vida?'
-    #     request = {
-    #         "message": user_message
-    #     }
-    #
-    #     response._content = json.dumps({"message": extract_response_text(generate_response(request))}).encode('utf-8')
-    #     response_dict['body'] = json.dumps(response.json())
+    else:
+        user_message = 'Oq é a vida?'
+        response._content = json.dumps({"message": generate_chat_response(user_message)}).encode('utf-8')
+
+    response_dict['body'] = json.dumps(response.json())
 
     return response_dict
