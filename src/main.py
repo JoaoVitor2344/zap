@@ -78,6 +78,6 @@ def main(context):
         user_message = 'Oq é a vida?'
         response._content = json.dumps({"message": generate_chat_response(user_message)}).encode('utf-8')
 
-    response_dict['body'] = json.dumps(response.json())
+    response_dict['body'] = json.dumps(context)
 
     return response_dict
