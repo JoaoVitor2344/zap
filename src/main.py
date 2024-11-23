@@ -54,15 +54,14 @@ def extract_response_text(response):
         raise ValueError("Erro ao extrair o texto da resposta: ", e)
 
 
-def main():
+if __name__ == "__main__":
     try:
         user_message = input("Digite sua mensagem: ")
         request = {
             "message": user_message
         }
 
-        response = generate_response(request)
-        response_text = extract_response_text(response)
+        response_text = extract_response_text(generate_response(request))
 
         response = Response()
         response.status_code = 200
@@ -71,7 +70,3 @@ def main():
         print(response.json())
     except Exception as e:
         print("Erro:", e)
-
-
-if __name__ == "__main__":
-    main()
