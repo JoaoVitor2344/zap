@@ -64,13 +64,12 @@ def generate_chat_response(user_message):
 
 def main(context):
     query_params = context.req.query_string
-
-    hub_challenge = query_params.get('hub.challenge', [None])[0]
-    hub_token = query_params.get('hub.verify_token', [None])[0]
-    expected_token = os.getenv('VERIFY_TOKEN')
-
     context.log(context.req.query_string)
 
+    # hub_challenge = query_params.get('hub.challenge', [None])[0]
+    # hub_token = query_params.get('hub.verify_token', [None])[0]
+    # expected_token = os.getenv('VERIFY_TOKEN')
+    #
     # response = Response()
     # response_dict = {
     #     "status_code": 200,
