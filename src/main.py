@@ -68,21 +68,18 @@ def main(context):
     hub_token = query_params.get('hub.verify_token')
     expected_token = os.getenv('VERIFY_TOKEN')
 
-    return context.res.empty()
+    response = Response()
+    response_dict = {
+        "status_code": 200,
+        "body": ''
+    }
 
-    #
-    # response = Response()
-    # response_dict = {
-    #     "status_code": 200,
-    #     "body": ''
-    # }
-    #
-    # if hub_token == expected_token:
-    #     response._content = json.dumps({"hub.challenge": hub_challenge}).encode('utf-8')
-    #     response_dict['body'] = json.dumps(context)
-    # else:
-    #     user_message = 'Oq é a vida?'
-    #     response._content = json.dumps({"message": generate_chat_response(user_message)}).encode('utf-8')
-    #     response_dict['body'] = json.dumps(response.json())
-    #
-    # return response_dict
+    if hub_token == expected_token:
+        response._content = json.dumps({"hub.challenge": hub_challenge}).encode('utf-8')
+        response_dict['body'] = json.dumps(context)
+    else:
+        user_message = 'Oq é a vida?'
+        response._content = json.dumps({"message": generate_chat_response(user_message)}).encode('utf-8')
+        response_dict['body'] = json.dumps(response.json())
+
+    return response_dict
