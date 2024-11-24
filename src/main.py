@@ -1,6 +1,7 @@
-import os
 from dotenv import load_dotenv
+from urllib.parse import urlparse, parse_qs
 from requests.models import Response
+import os
 import google.generativeai as genai
 import json
 
@@ -62,8 +63,12 @@ def generate_chat_response(user_message):
 
 
 def main(context):
-    hub_challenge = getattr(context, 'hub.challenge', None)
-    hub_token = getattr(context, 'hub.verify_token', None)
+    request_url = context.get('url', '')
+    parsed_url = urlparse(request_url)
+    query_params = parse_qs(parsed_url.query)
+
+    hub_challenge = query_params.get('hub.challenge', [None])[0]
+    hub_token = query_params.get('hub.verify_token', [None])[0]
     expected_token = os.getenv('VERIFY_TOKEN')
 
     response = Response()
