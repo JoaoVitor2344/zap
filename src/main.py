@@ -65,7 +65,9 @@ def generate_chat_response(user_message):
 def main(context):
     query_params = context.req.query_string
 
-    return context.log(context.req.query_string)
+    context.log(context.req.query_string)
+
+    return context.res.empty()
 
     # hub_challenge = query_params.get('hub.challenge', [None])[0]
     # hub_token = query_params.get('hub.verify_token', [None])[0]
