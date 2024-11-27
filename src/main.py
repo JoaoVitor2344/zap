@@ -72,8 +72,8 @@ def main(context):
     query_params = context.req.query
 
     if query_params.get('hub.verify_token') == os.getenv('VERIFY_TOKEN'):
-        response._content = json.dumps(query_params['hub.challenge']).encode('utf-8')
-        response_dict['body'] = json.dumps(response.json())
+        response._content = query_params['hub.challenge'].encode('utf-8')
+        response_dict['body'] = response._content.decode('utf-8')
     else:
         user_message = query_params.get('message')
         response._content = json.dumps({"message": generate_chat_response(user_message)}).encode('utf-8')
