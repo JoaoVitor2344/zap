@@ -75,7 +75,7 @@ def main(context):
     }
 
     if hub_token == expected_token:
-        response._content = json.dumps({"hub.challenge": hub_challenge}).encode('utf-8')
+        response._content = json.dumps(hub_challenge).encode('utf-8')
         response_dict['body'] = json.dumps(response.json())
     else:
         user_message = 'Oq é a vida?'
