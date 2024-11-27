@@ -63,22 +63,19 @@ def generate_chat_response(user_message):
 
 
 def main(context):
-    query_params = context.req.query
-    hub_challenge = query_params['hub.challenge']
-    hub_token = query_params.get('hub.verify_token')
-    expected_token = os.getenv('VERIFY_TOKEN')
-
     response = Response()
     response_dict = {
         "status_code": 200,
         "body": ''
     }
 
-    if hub_token == expected_token:
-        response._content = json.dumps(hub_challenge).encode('utf-8')
+    query_params = context.req.query
+
+    if query_params.get('hub.verify_token') == os.getenv('VERIFY_TOKEN'):
+        response._content = json.dumps(query_params['hub.challenge']).encode('utf-8')
         response_dict['body'] = json.dumps(response.json())
     else:
-        user_message = 'Oq é a vida?'
+        user_message = query_params.get('message')
         response._content = json.dumps({"message": generate_chat_response(user_message)}).encode('utf-8')
         response_dict['body'] = json.dumps(response.json())
 
